@@ -1,5 +1,5 @@
-import { AngryVectors } from './AngryVectors'
+import { QuakeVis } from './QuakeVis'
 
 // Start the game
-var game = new AngryVectors();
+var game = new QuakeVis();
 game.start();

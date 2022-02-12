@@ -16,13 +16,13 @@ export abstract class GraphicsApp
     // Clock for computing fps
     private clock : THREE.Clock;
 
-    constructor(aspectRatio = 1.333)
+    constructor(fov = 60, aspectRatio = 1.333, znear = 1, zfar = 1000)
     {
         // Set the default camera parameters
+        this.fov = fov;
         this.aspectRatio = aspectRatio;
-        this.fov = 60;
-        this.znear = 1;
-        this.zfar = 1000;
+        this.znear = znear;
+        this.zfar = zfar;
 
         // Initialize graphics
         this.renderer = new THREE.WebGLRenderer();

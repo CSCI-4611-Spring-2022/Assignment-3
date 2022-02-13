@@ -70,23 +70,16 @@ export class QuakeVis extends GraphicsApp
         // Create a GUI control for the view mode and add a change event handler
         var viewController = controls.add(this, 'viewMode', {Map: 'Map', Globe: 'Globe'});
         viewController.name('View Mode');
-        viewController.onChange((value: string) => {
-            console.log("View mode changed to: " + value);
-        });
+        viewController.onChange((value: string) => { this.changeViewMode(value) });
 
         // Create a GUI control for the playback speed and add a change event handler
         var playbackController = controls.add(this, 'playbackSpeed', 0, 1);
         playbackController.name('Playback Speed');
-        playbackController.onChange((value: number) => {
-            console.log("Playback speed changed to: " + value);
-        });
 
         // Create a GUI control for the debug mode and add a change event handler
         var debugController = controls.add(this, 'debugMode');
         debugController.name('Debug Mode');
-        debugController.onChange((value: boolean) => {
-            console.log("Debug mode changed to: " + value);
-        });
+        debugController.onChange((value: boolean) => { this.toggleDebugMode(value) });
 
         // Make the GUI controls wider and open by default
         this.gui.width = 300;
@@ -120,5 +113,15 @@ export class QuakeVis extends GraphicsApp
         this.date = currentDate.getUTCMonth() + "/" + currentDate.getUTCDate() + "/" + currentDate.getUTCFullYear();
         
         // TO DO: Draw the earthquakes!
+    }
+
+    toggleDebugMode(value: boolean) : void
+    {
+        this.earth.toggleDebugMode(value);
+    }
+    
+    changeViewMode(value: string) : void
+    {
+        console.log("View mode changed to: " + value);
     }
 }

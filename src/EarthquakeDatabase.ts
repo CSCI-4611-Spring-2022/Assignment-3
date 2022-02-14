@@ -1,14 +1,15 @@
 import * as THREE from 'three'
-import { Earth } from './Earth';
-import { Earthquake } from './Earthquake'
+import { EarthquakeRecord } from './EarthquakeRecord'
 
 export class EarthquakeDatabase
 {
-    public earthquakes : Earthquake[];
+    public earthquakes : EarthquakeRecord[];
     public loaded : boolean;
 
     public maxMagnitude : number;
     public minMagnitude : number;
+
+    private nextIndex : number;
 
     constructor(filename : string)
     {
@@ -16,6 +17,7 @@ export class EarthquakeDatabase
         this.loaded = false;
         this.maxMagnitude = 0;
         this.minMagnitude = Infinity;
+        this.nextIndex = 0;
 
         var loader = new THREE.FileLoader();
         loader.load(filename, (data : string | ArrayBuffer) => {
@@ -23,7 +25,7 @@ export class EarthquakeDatabase
             lines.forEach((line: string) => {
                 if(line.length > 30)
                 {
-                    var quake = new Earthquake(line);
+                    var quake = new EarthquakeRecord(line);
                     this.earthquakes.push(quake)
 
                     if(quake.magnitude > this.maxMagnitude)
@@ -36,26 +38,29 @@ export class EarthquakeDatabase
         });
     }
 
-    // Performs a binary search for the most recent quake
-    public findMostRecentQuake(date : Date)
+    public reset() : void
+    {
+        this.nextIndex = 0;
+    }
+
+    public getNextQuake(date: Date) : EarthquakeRecord | null
     {
         var targetTime = date.getTime();
 
-        var start = 0;
-        var end = this.earthquakes.length - 1;
-        while (start < end - 1)
+        while(this.nextIndex < this.earthquakes.length)
         {
-            var half = Math.floor((start + end) / 2);
-            if(this.earthquakes[half].date.getTime() > targetTime)
-                end = half - 1;
+            if(this.earthquakes[this.nextIndex].date.getTime() < targetTime)
+            {
+                this.nextIndex++;
+                return this.earthquakes[this.nextIndex - 1];
+            }
             else
-                start = half;
+            {
+                return null;
+            }
         }
 
-        if (start == end || this.earthquakes[end].date.getTime() > targetTime)
-            return start;
-        else
-            return end;
+        return null;
     }
 
     public getMaxTime() : number

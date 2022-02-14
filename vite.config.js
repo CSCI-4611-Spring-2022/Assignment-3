@@ -6,6 +6,7 @@ export default defineConfig({
     port: 8080
   },
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         entryFileNames: '[name].js',

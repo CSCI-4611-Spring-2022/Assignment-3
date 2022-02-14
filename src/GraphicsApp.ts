@@ -75,7 +75,7 @@ export abstract class GraphicsApp
 
     // Resize and center the viewport, preserving the aspect ratio
     // You do not need to modify this function
-    private resize() : void
+    resize() : void
     {
         // Resize the renderer to match the window size
         this.renderer.setSize(window.innerWidth, window.innerHeight);

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { EarthquakeRecord } from './EarthquakeRecord';
 
 export class Earth extends THREE.Group
 {
@@ -21,7 +22,7 @@ export class Earth extends THREE.Group
         // Initialize texture: you can change to a lower-res texture here if needed
         // Note that this won't display properly until you assign texture coordinates to the mesh
         this.earthMaterial.map = new THREE.TextureLoader().load('./data/earth-2k.png');
-        this.earthMesh.material = this.earthMaterial;
+        this.earthMaterial.map.minFilter = THREE.LinearFilter;
 
         // Setup the debug material for wireframe viewing
         this.debugMaterial.wireframe = true;
@@ -50,7 +51,7 @@ export class Earth extends THREE.Group
         this.add(this.earthMesh);
     }
 
-    public update(deltaTime : number) : void
+    public update(deltaTime: number) : void
     {
         
     }

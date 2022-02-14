@@ -12,6 +12,8 @@ export class QuakeVis extends GraphicsApp
 
     // State variables
     private currentTime : number;
+    private mouseDrag : boolean;
+    private mouseVector : THREE.Vector2;
 
     // GUI variables
     private date : string;
@@ -29,6 +31,8 @@ export class QuakeVis extends GraphicsApp
         this.earthquakeDB = new EarthquakeDatabase('./data/earthquakes.txt');
 
         this.currentTime = Infinity;
+        this.mouseDrag = false;
+        this.mouseVector = new THREE.Vector2();
 
         this.date = '';
         this.viewMode = 'Map';
@@ -39,21 +43,17 @@ export class QuakeVis extends GraphicsApp
     createScene() : void
     {
         // Setup camera
-        this.camera.position.set(0, 0, 3.5);
+        this.camera.position.set(0, 0, 3.25);
         this.camera.lookAt(0, 0, 0);
         this.camera.up.set(0, 1, 0);
 
-        // Create an ambient light
-        var ambientLight = new THREE.AmbientLight('white', 0.25);
-        this.scene.add(ambientLight);
-
         // Create a directional light
-        var directionalLight = new THREE.DirectionalLight('white', .6);
-        directionalLight.position.set(10, 10, 10);
+        var directionalLight = new THREE.DirectionalLight('white', 1.5);
+        directionalLight.position.set(10, 10, 15);
         this.scene.add(directionalLight)
 
         // Load a texture and set it as the background
-        this.scene.background = new THREE.TextureLoader().load('./data/iss006e40544.png')
+        this.scene.background = new THREE.TextureLoader().load('./data/stars.png')
 
         // Initialize the earth and add it to the scene
         this.earth.initialize();
@@ -70,8 +70,10 @@ export class QuakeVis extends GraphicsApp
         // Create a GUI control for the view mode and add a change event handler
         var viewController = controls.add(this, 'viewMode', {Map: 'Map', Globe: 'Globe'});
         viewController.name('View Mode');
-        viewController.onChange((value: string) => { this.changeViewMode(value) });
-
+        viewController.onChange((value: string) => { 
+            // TO DO: switch between map and globe views
+        });
+        
         // Create a GUI control for the playback speed and add a change event handler
         var playbackController = controls.add(this, 'playbackSpeed', 0, 1);
         playbackController.name('Playback Speed');
@@ -94,34 +96,50 @@ export class QuakeVis extends GraphicsApp
         if(!this.earthquakeDB.loaded)
             return;
 
-        // Number of seconds in 1 year (approx.)
-        const playbackWindow = 12 * 28 * 24 * 60 * 60;
-
         // Scale factor for time progression
-        // Multiply by 1000 to convert from seconds to milliseconds
-        const playbackScale = 30000000*1000;
+        const playbackScale = 30000000000;
 
-        // Advance current time
+        // Advance current time in milliseconds
         this.currentTime += playbackScale * this.playbackSpeed * deltaTime;
 
         // If we are beyond the max time, loop back to the beginning
         if(this.currentTime > this.earthquakeDB.getMaxTime())
+        {
             this.currentTime = this.earthquakeDB.getMinTime();
+            this.earthquakeDB.reset();
+        }
 
+        // Update the current date
         var currentDate = new Date();
         currentDate.setTime(this.currentTime);
         this.date = currentDate.getUTCMonth() + "/" + currentDate.getUTCDate() + "/" + currentDate.getUTCFullYear();
-        
-        // TO DO: Draw the earthquakes!
+
+        // TO DO: Create and animate the earthquakes!
     }
 
     toggleDebugMode(value: boolean) : void
     {
         this.earth.toggleDebugMode(value);
     }
-    
-    changeViewMode(value: string) : void
+
+    onMouseDown(event: MouseEvent) : void 
     {
-        console.log("View mode changed to: " + value);
+        this.mouseDrag = true;
+    }
+
+    onMouseUp(event: MouseEvent) : void
+    {
+        this.mouseDrag = false;
+    }
+
+    onMouseMove(event: MouseEvent) : void
+    {
+        if(this.mouseDrag)
+        {
+            // TO DO: Add code for when the user clicks and drags the mouse
+        }
+
+        // Set the mouse vector in case we need to use it in update()
+        this.mouseVector.set(event.x, event.y);
     }
 }

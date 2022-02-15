@@ -8,7 +8,7 @@ Visualizations incorporating geospatial data are used and analyzed in many diffe
 
 Your application will be able to morph between two complementary views of the data, a 2D map view and a 3D globe view, as shown below.  You can also try out the instructor's [complete implementation](https://csci-4611-spring-2022.github.io/Builds/Assignment-3) in the Builds repository on the course GitHub. 
 
-***images to be added***
+![](./images/sidebyside.png) 
 
 The earthquake dataset you’ll be using includes 13,540 different earthquakes. The Earth texture dataset from NASA is available in resolutions down to 500m/pixel (although getting this to display on your graphics card is well beyond the scope of this assignment).
 
@@ -69,7 +69,44 @@ To be added.
 
 ## Useful Math
 
-To be added.
+Here are a few mathematical operations that are very common in graphics and may be useful for this assignment:
+
+**Linear interpolation**: One way to blend smoothly between two values *x* and *y* (which could be reals, or vectors, or matrices, etc.) is to define a function in which the output varies continuously from *x* to *y* as a scalar parameter *a* goes from 0 to 1. This function is traditionally abbreviated "lerp."
+
+​		lerp(*x*, *y*, *a*) = *x* + *a*(*y* − *x*)
+
+Thus, for example:
+
+​		lerp(*x*, *y*, 0) = *x*
+
+​		lerp(*x*, *y*, 1) = *y*
+
+​		lerp(*x*, *y*, 0.5) = (*x* + *y*)/2
+
+Three.js provides `lerp()` functions for several of the built-in types, include scalars, vectors, and colors.  For example:
+
+```typescript
+// scalars
+var result = THREE.MathUtils.lerp(x, y, alpha);
+
+// vectors (this function modifies the calling object)
+// x and y are vectors, alpha is a scalar
+someVector.lerpVectors(x, y, a);
+
+// colors (this function modifies the calling object)
+// x and y are colors, alpha is a scalar
+someColor.lerpColors(x, y, a)
+```
+
+**Clamping**: A concise way to constrain a value to lie in a specified interval [*a*, *b*] is to define a function clamp(*x*, *a*, *b*) which returns *a* if *x* ≤ *a*, returns *b* if *x* ≥ *b*, and returns *x* otherwise.  Three.js conveniently provides a clamp function, which would be called as follows:
+
+```typescript
+x = THREE.MathUtils.clamp(x, a, b)
+```
+
+**Rescaling**: Suppose you have a value *x* in the range [*xmin*, *xmax*], and you want to find the corresponding value in [*ymin*, *ymax*]. Observe that *x* − *xmin* lies in [0, *xmax* − *xmin*], and (*x* − *xmin*)/(*xmax* − *xmin*) lies in [0, 1], so the desired value is:
+
+​		*y* = *ymin* + (*ymax* − *ymin*)(*x* − *xmin*)/(*xmax* − *xmin*)
 
 ## Rubric
 

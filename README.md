@@ -114,14 +114,11 @@ Display on the Earth all the earthquakes that have happened within the past one 
 Create a second array of vertex positions to draw the Earth as a sphere instead of a rectangle.
 
 - Complete the `Earth.convertLatLongToSphere() ` method.  If you use this to version when creating your mesh, you should end up with sphere geometry instead of a flat map. The mesh connectivity (i.e., the indices that define the triangles) and texture coordinates **do not need to change** when from moving from a plane to a sphere. Only the vertex positions need to change.
-
 - You will need to convert latitude and longitude into the three-dimensional Cartesian coordinates of the corresponding point on the sphere, using the following formulas:
+  - **x** = cos(**lat**) * sin(**lon**)
+  - **y**= sin(**lat**)
+  - **z** = cos(**lat**) * cos(**lon**)
 
-  **x** = cos(**lat**) * sin(**lon**)
-
-​		**y**= sin(**lat**)
-
-​		**z** = cos(**lat**) * cos(**lon**)
 
 - Be careful to take note that the latitude and longitude in the input file are in degrees, not radians. You can convert them to radians by multiplying by `Math.PI / 180`.
 

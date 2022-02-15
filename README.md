@@ -117,15 +117,17 @@ Create a second array of vertex positions to draw the Earth as a sphere instead 
 
 - You will need to convert latitude and longitude into the three-dimensional Cartesian coordinates of the corresponding point on the sphere, using the following formulas:
 
-  ​		**x** = cos(**lat**) * sin(**lon**)
+  **x** = cos(**lat**) * sin(**lon**)
 
-​				**y**= sin(**lat**)
+​		**y**= sin(**lat**)
 
-​				**z** = cos(**lat**) * cos(**lon**)
+​		**z** = cos(**lat**) * cos(**lon**)
 
 - Be careful to take note that the latitude and longitude in the input file are in degrees, not radians. You can convert them to radians by multiplying by `Math.PI / 180`.
 
-- The texture is permitted to look slightly "cut off" *only* at the top and bottom stack of the Earth mesh. The image below shows what this looks like when *columns* = 6 and *rows* = 3. (See below for why this happens.) Increasing the number of rows and columns will make this problem less obvious.
+- The texture is permitted to look slightly "cut off" *only* at the top and bottom stack of the Earth mesh. The image below shows what this looks like when *columns* = 6 and *rows* = 3.  Increasing the number of rows and columns will make this problem less obvious.
+
+![](./images/blockyearth.jpg)
 
 #### 6. Creating the Globe Mesh Normals
 
@@ -145,9 +147,7 @@ If you reduce the value of *columns* and *rows* and then watch the mesh structur
 
 Similar to the globe geometry, you will need to create a second position variable for each earthquake marker using the `Earth.convertLatLongToSphere()` method.  Both of these positions are stored using `Vector3`, so you can use the `lerpVectors()` function described in the "Useful Math" section to morph between them at the same time as the map and globe.
 
-- The earthquakes must appear on the sphere in the correct geographical locations.  However, note that they may not lie exactly on the mesh if it has too few rows and columns.  For example, the following mesh is a poor approximation of a sphere:
-
-![](./images/blockyearth.jpg)
+- The earthquakes must appear on the sphere in the correct geographical locations.  However, note that they may not lie exactly on the mesh if it has too few rows and columns.
 
 ## Useful Math
 
@@ -155,15 +155,15 @@ Here are a few mathematical operations that are very common in graphics and may 
 
 **Linear interpolation**: One way to blend smoothly between two values *x* and *y* (which could be reals, or vectors, or matrices, etc.) is to define a function in which the output varies continuously from *x* to *y* as a scalar parameter *alpha* goes from 0 to 1. This function is traditionally abbreviated "lerp."
 
-​		lerp(*x*, *y*, *alpha*) = *x* + *alpha* * *(*y − *x*)
+lerp(*x*, *y*, *alpha*) = *x* + *alpha* * *(*y − *x*)
 
 Thus, for example:
 
-​		lerp(*x*, *y*, 0) = *x*
+lerp(*x*, *y*, 0) = *x*
 
-​		lerp(*x*, *y*, 1) = *y*
+lerp(*x*, *y*, 1) = *y*
 
-​		lerp(*x*, *y*, 0.5) = (*x* + *y*) / 2
+lerp(*x*, *y*, 0.5) = (*x* + *y*) / 2
 
 Three.js provides `lerp()` functions for several of the built-in types, include scalars, vectors, and colors.  For example:
 
@@ -188,7 +188,7 @@ x = THREE.MathUtils.clamp(x, a, b)
 
 **Rescaling**: Suppose you have a value *x* in the range [*xmin*, *xmax*], and you want to find the corresponding value in [*ymin*, *ymax*]. Observe that *x* − *xmin* lies in [0, *xmax* − *xmin*], and (*x* − *xmin*)/(*xmax* − *xmin*) lies in [0, 1], so the desired value is:
 
-​		*y* = *ymin* + (*ymax* − *ymin*) * (*x* − *xmin*) / (*xmax* − *xmin*)
+*y* = *ymin* + (*ymax* − *ymin*) * (*x* − *xmin*) / (*xmax* − *xmin*)
 
 ## Rubric
 

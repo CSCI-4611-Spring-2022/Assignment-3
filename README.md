@@ -152,15 +152,15 @@ Here are a few mathematical operations that are very common in graphics and may 
 
 **Linear interpolation**: One way to blend smoothly between two values *x* and *y* (which could be reals, or vectors, or matrices, etc.) is to define a function in which the output varies continuously from *x* to *y* as a scalar parameter *alpha* goes from 0 to 1. This function is traditionally abbreviated "lerp."
 
-lerp(*x*, *y*, *alpha*) = *x* + *alpha* * *(*y − *x*)
+- lerp(*x*, *y*, *alpha*) = *x* + *alpha* * *(*y − *x*)
 
 Thus, for example:
 
-lerp(*x*, *y*, 0) = *x*
+- lerp(*x*, *y*, 0) = *x*
 
-lerp(*x*, *y*, 1) = *y*
+- lerp(*x*, *y*, 1) = *y*
 
-lerp(*x*, *y*, 0.5) = (*x* + *y*) / 2
+- lerp(*x*, *y*, 0.5) = (*x* + *y*) / 2
 
 Three.js provides `lerp()` functions for several of the built-in types, include scalars, vectors, and colors.  For example:
 
@@ -185,7 +185,7 @@ x = THREE.MathUtils.clamp(x, a, b)
 
 **Rescaling**: Suppose you have a value *x* in the range [*xmin*, *xmax*], and you want to find the corresponding value in [*ymin*, *ymax*]. Observe that *x* − *xmin* lies in [0, *xmax* − *xmin*], and (*x* − *xmin*)/(*xmax* − *xmin*) lies in [0, 1], so the desired value is:
 
-*y* = *ymin* + (*ymax* − *ymin*) * (*x* − *xmin*) / (*xmax* − *xmin*)
+- *y* = *ymin* + (*ymax* − *ymin*) * (*x* − *xmin*) / (*xmax* − *xmin*)
 
 ## Rubric
 

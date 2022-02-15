@@ -67,7 +67,7 @@ The earthquake dataset contains information about the earthquake's magnitude (a 
 
 You will be required to write the code that displays the Earth on screen and animates it between flat rectangular map and a three-dimensional globe. You will also need to write the code to display the earthquakes on the Earth. The starter code defines a single directional light source at position (10,10,15).  If your normals are defined correctly, you will see some brighter lighting on the top-right portion of the globe, while the bottom-left portion will appear dark.
 
-#### Creating the Flat Map Mesh
+#### 1. Creating the Flat Map Mesh
 
 Use the `THREE.Mesh` class to draw a rectangle subdivided into multiple triangles, representing a flat map of the Earth. The Flat Map Mesh should:
 
@@ -87,26 +87,31 @@ The best way to go about this is to start with a small example and then build up
 - When your simple example is working, increase the number of rows and columns.  Make sure your *x* and *y* values follow the ranges mentioned above.  You will want the number of vertices to be large enough so that the mesh can be morphed into a reasonable-looking sphere in a later part of this assignment   However, if you make the mesh too large, it will slow down the rendering.
 - At this point, we also recommend that you clean up your code a bit. At some point in your code, you will have needed to convert a latitude and longitude to a (x,y,z) point. If you have not done so already, move this code into the function called `Earth.convertLatLongToPlane()`. This will make it easier for you to use the same code later to find the correct positions for earthquakes.
 
-#### Texturing the Mesh
+#### 2. Creating the Flat Map Normals
 
-Apply a texture of the Earth to the rectangle so that it looks like the original image.
+In computer graphics, vertex normals need to be defined for lighting calculations. For each vertex in the flat map, the normal should be the vector pointing directly outward towards the camera (0, 0, 1).  An example for the single square mesh is also provided in the starter code.  The array of normals should be exactly the same length as the vertex array, so you will need to expand the array based on the size of your mesh.
 
-- To do this, you will need to define texture coordinates.  Assuming the *u* and *v* values are stored in an array called `texCoords`, you can assign them to the mesh with the following line of code:
+#### 3. Texturing the Mesh
+
+In the starter code, the Earth texture is loaded and assigned to the example mesh.  However, it won't be displayed until you define the texture coordinates. We will go over this in class, but as a reminder, each vertex requires two coordinates, *u* and *v*, each of which should be a value between 0 and 1.
+
+-  Assuming the *u* and *v* values are stored in an array called `texCoords`, you can assign them to the mesh with the following line of code:
 
 ```typescript
 this.earthMesh.geometry.setAttribute('uv', new THREE.Float32BufferAttribute(texCoords, 2));
 ```
 
-#### Displaying the Earthquakes
+#### 4. Displaying the Earthquakes
 
 Display on the Earth all the earthquakes that have happened within the past one year of the current visualization time.
 
 - Use your `Earth.convertLatLongToPlane()` method to obtain the earthquake positions such that they match the textures (i.e., an earthquake occurring in California must be displayed in the same location as the California of the Earth texture). One way to tell if your mapping is correct is if you see a lot of earthquakes along the "Ring of Fire" in the Pacific Ocean off the coast of Asia.
 - You may use a sphere to draw the earthquake markers or come up with your own custom geometry. Earthquake sizes and colors should be based on the earthquake data in some meaningful way. For example, the instructor's implementation used `lerp()` functions to adjust the radius (between some predefined minimum and maximum) and color (between yellow to red) of the sphere based on the magnitude.
+- In the instructor's implementation, the earthquakes markers are animated to gradually shrink and then are removed from the scene.  The size animation is not necessary for this assignment and could be considered as wizard functionality.  However, you should still make sure to remove each marker after a certain period of time by calling the parent object's `remove()` function.  Otherwise, it will keep creating new markers until the program slows down and potentially crashes.
 
-#### Creating the Globe Mesh Geometry
+#### 5. Creating the Globe Mesh Geometry
 
-Change the vertex positions and normals to draw the Earth as a sphere instead of a rectangle.
+Create a second array of vertex positions to draw the Earth as a sphere instead of a rectangle.
 
 - Complete the `Earth.convertLatLongToSphere() ` method.  If you use this to version when creating your mesh, you should end up with sphere geometry instead of a flat map. The mesh connectivity (i.e., the indices that define the triangles) and texture coordinates **do not need to change** when from moving from a plane to a sphere. Only the vertex positions need to change.
 
@@ -121,27 +126,28 @@ Change the vertex positions and normals to draw the Earth as a sphere instead of
 - Be careful to take note that the latitude and longitude in the input file are in degrees, not radians. You can convert them to radians by multiplying by `Math.PI / 180`.
 
 - The texture is permitted to look slightly "cut off" *only* at the top and bottom stack of the Earth mesh. The image below shows what this looks like when *columns* = 6 and *rows* = 3. (See below for why this happens.) Increasing the number of rows and columns will make this problem less obvious.
-- The earthquakes must appear on the sphere in the correct geographical locations (though they may not lie exactly on the mesh if it has too few rows and columns ).  For example, the following mesh is a poor approximation of a sphere:
 
-![](./images/blockyearth.jpg)
+#### 6. Creating the Globe Mesh Normals
 
-#### Creating the Globe Mesh Normals
+Create a second array of normals for the globe mesh.  Because you are now rendering a sphere, you will need to compute new normals to get the lighting on the globe to look good. For each vertex, the normal should be the normalized vector pointing from the center of the sphere (the origin) to the vertex position.  The array of normals should be exactly the same length as the vertex array. 
 
-Because you are now rendering a sphere, you will need to add some normals to get the lighting on the globe to look good. The normals array should be exactly the same length as the vertices array, and you can set them using:
-
-```typescript
-this.earthMesh.geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-```
-
-#### Morphing Between the Map and Globe
+#### 7. Morphing Between the Map and Globe
 
 Smoothly transform the mesh between the flat map and the globe based on user input. The program should start with the Earth displayed as a map. When the user changes the drop down box to "Globe," it should morph into a sphere. If the user changes it back to "Map," it should smoothly morph back to the flat plane.  A GUI event handler called `viewController.onChange()` is already implemented in the `createScene()` function, but you will need to fill in the code.
 
 - To get started on this, you will want to store the parts of the mesh that change between the two representations (vertices and normals) as member variables within your Earth class rather than local variables within the `initialize()` method. This way, you will be able to refer to them later in your program.
-- Once you have these values stored, try updating the mesh whenever the drop down box is changed. To update the mesh, you just need to call `this.earthMesh.geometry.setAttribute` again with the appropriate arrays for vertices and normals.
-- Once you have an abrupt transition working, try creating a smooth morph. Remember that the `update(deltaTime)` function should be used for any sort of physical simulation or animation. Inside that function, you should interpolate between the vertices for the map and for the globe based upon the elapsed time since you began the morph. Check out the `lerp()` functions described in the section below for help with this. (Technically, the correct normal of the interpolated shape is not simply the interpolation of the normals, but we may pretend it is for this assignment.)
+- Once you have these values stored, try updating the mesh whenever the drop down box is changed. To update the mesh, you just need to call `this.earthMesh.geometry.setAttribute` again with the appropriate arrays for the vertices and normals.
+- Once you have an abrupt transition working, try creating a smooth morph. Remember that the `update(deltaTime)` function should be used for any sort of physical simulation or animation. Inside that function, you should interpolate between the vertices for the map and for the globe based upon the elapsed time since you began the morph. Check out the `lerp()` functions described in the "Useful Math" section for help with this. (Technically, the correct normal of the interpolated shape is not simply the interpolation of the normals, but we may pretend it is for this assignment.)
 
 If you reduce the value of *columns* and *rows* and then watch the mesh structure in debug mode as it interpolates between a rectangle and a sphere, you should be able to see why the texture appears to be cut off near the poles.
+
+#### 8. Morphing the Earthquake Positions
+
+Similar to the globe geometry, you will need to create a second position variable for each earthquake marker using the `Earth.convertLatLongToSphere()` method.  Both of these positions are stored using `Vector3`, so you can use the `lerpVectors()` function described in the "Useful Math" section to morph between them at the same time as the map and globe.
+
+- The earthquakes must appear on the sphere in the correct geographical locations.  However, note that they may not lie exactly on the mesh if it has too few rows and columns.  For example, the following mesh is a poor approximation of a sphere:
+
+![](./images/blockyearth.jpg)
 
 ## Useful Math
 
@@ -186,13 +192,28 @@ x = THREE.MathUtils.clamp(x, a, b)
 
 ## Rubric
 
-Graded out of 20 points.
+Graded out of 20 points.  Partial credit is possible for each step.
+
+1. Creating the flat map mesh (4)
+2. Creating the flat map normals (1)
+3. Texturing the mesh (2)
+4. Displaying the earthquakes (4)
+5. Creating the globe mesh geometry (2)
+6. Creating the globe mesh normals (1)
+7. Morphing between the map and globe (4)
+8. Morphing the earthquake positions (2)
 
 ## Wizard Bonus Challenge
 
 All of the assignments in the course will include great opportunities for students to go beyond the requirements of the assignment and do cool extra work. On each assignment, you can earn **one bonus point** for implementing a meaningful new feature to your program. This should involve some original new programming, and should not just be something that can be quickly implemented by copying and slightly modifying existing code.  
 
-There are great opportunities for extra work in this assignment. For example, the source website for the Earth texture (see Data Credits below) has images for each month of the year. You could animate between the textures based upon the current time of year. We have also included a height text file that contains the elevation and bathymetry data for the Earth on an 8-bit scale (0-255, with sea level at 127, and 0 and 255 representing 8 km below and above sea level, respectively. You could use this data file to visualize the shape of the Earth's surface by displacing mesh vertices along their normals. You will need to use a higher resolution mesh to make this look good (the example code uses 200x200). You can also adjust the model matrix for the earth to make it spin around and even apply an axial tilt (on average, the earth's axial tilt is about 23.4 degrees). Or, come up with a completely novel idea. Creativity is encouraged!
+There are great opportunities for extra work in this assignment. For example:
+
+- The source website for the Earth texture (see Data Credits below) has images for each month of the year. You could animate between the textures based upon the current time of year.
+- We have also included a height text file that contains the elevation and bathymetry data for the Earth on an 8-bit scale (0-255, with sea level at 127, and 0 and 255 representing 8 km below and above sea level, respectively. You could use this data file to visualize the shape of the Earth's surface by displacing mesh vertices along their normals. You will need to use a higher resolution mesh to make this look good.  The instructor's implementation uses 200x200.
+- You could adjust the model matrix for the earth to make it spin around and even apply an axial tilt (on average, the earth's axial tilt is about 23.4 degrees). 
+- You could implement an animation for the earthquake markers. In the instructor's implementation, the markers gradually shrink in size. You could implement something similar or a completely different animation.
+- Or, come up with a completely novel idea. Creativity is encouraged!
 
 ## Submission
 
@@ -213,11 +234,11 @@ Note that the published JavaScript bundle code generated by the TypeScript compi
 
 ## Acknowledgments
 
-Earthquake data was obtained from [USGS](http://earthquake.usgs.gov).  This data is in the [public domain](https://www.usgs.gov/legal).
+Earthquake data was obtained from [USGS](http://earthquake.usgs.gov).  This data is in the public domain.
 Credit: U.S. Geological Survey 
 Department of the Interior/USGS
 
-The Earth texture was obtained from [NASA](http://visibleearth.nasa.gov/view_cat.php?categoryID=1484). This data is in the [public domain](http://visibleearth.nasa.gov/useterms.php).
+The Earth texture was obtained from [NASA](http://visibleearth.nasa.gov/view_cat.php?categoryID=1484). This data is in the public domain.
 Credit: NASA Earth Observatory
 
 The star background image was created by Jeremy Perkins on [Unsplash](https://unsplash.com/photos/uhjiu8FjnsQ).

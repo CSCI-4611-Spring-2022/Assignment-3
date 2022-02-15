@@ -29,20 +29,28 @@ export class Earth extends THREE.Group
 
         // As a demo, we'll add a square with 2 triangles.
         // First, we define four vertices
-        var vertices : Array<number> = [];
+        var vertices = [];
         vertices.push(-.5, -.5, 0);
         vertices.push(.5, -.5, 0);
         vertices.push(.5, .5, 0);
         vertices.push(-.5, .5, 0);
 
+        // The normals are always directly outward towards the camera
+        var normals = [];
+        normals.push(0, 0, 1);
+        normals.push(0, 0, 1);
+        normals.push(0, 0, 1);
+        normals.push(0, 0, 1);
+
         // Next we define indices into the array for the two triangles
-        var indices : Array<number> = [];
+        var indices = [];
         indices.push(0, 1, 2);
         indices.push(0, 2, 3);
 
         // Set the vertex positions in the geometry
         // The itemSize is 3 because each item is X, Y, Z
         this.earthMesh.geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        this.earthMesh.geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
 
         // Set the triangle indices
         this.earthMesh.geometry.setIndex(indices);

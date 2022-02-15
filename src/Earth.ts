@@ -63,4 +63,20 @@ export class Earth extends THREE.Group
         else
             this.earthMesh.material = this.earthMaterial;
     }
+
+    public convertLatLongToPlane(latitude: number, longitude: number) : THREE.Vector3
+    {
+        // TODO: We recommend filling in this function to put all your
+        // lat,long --> plane calculations in one place.
+
+        return new THREE.Vector3();
+    }
+
+    public convertLatLongToSphere(latitude: number, longitude: number) : THREE.Vector3
+    {
+        // TODO: We recommend filling in this function to put all your
+        // lat,long --> sphere calculations in one place.
+
+        return new THREE.Vector3();
+    }
 }

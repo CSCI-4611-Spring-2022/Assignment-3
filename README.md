@@ -63,9 +63,69 @@ The [complete implementation](https://csci-4611-spring-2022.github.io/Builds/Ass
 
 The earthquake dataset contains information about the earthquake’s magnitude (a measure of severity) and its longitude and latitude. This data has already been loaded into `EarthquakeRecord` objects by the `EarthquakeDatabase` class.  You’ll be required to display the earthquakes at the correct locations with animations through time. More information on the earthquakes is available in the data file, and if you are interested in potential wizard ideas, you can try to figure out ways to integrate additional data variables into your visualization.
 
-## Program Description
+## Program Requirements
 
-To be added.
+You will be required to write the code that displays the Earth on screen and animates it between flat rectangular map and a three-dimensional globe. You will also need to write the code to display the earthquakes on the Earth. The starter code defines a single directional light source at position (10,10,15).  If your normals are defined correctly, you will see some brighter lighting on the top-right portion of the globe, while the bottom-left portion will appear dark.
+
+*Work in the “C” range will:*
+
+Use the MinGfx::Mesh class to draw a rectangle subdivided into multiple triangles, representing a flat map of the Earth. The Flat Map Mesh should:
+
+- Lie in the *xy* plane.
+- Have x values ranging from −*π* to *π*.
+- Have y values ranging from −*π*/2 to *π*/2.
+- Be divided into *nslices* divisions horizontally and *nstacks* divisions vertically. (You will find these constants in the code. Note that this will produce (*slices*+1)×(*stacks*+1) vertices and 2×*slices*×*stacks* triangles.)
+
+![](./images/triangles.png)
+
+The best way to go about this is to start with a small example and then build up from there. We recommend:
+
+- Above is an example with 6 slices and 3 stacks. Study how vertices are connected into triangles here.
+- Work out the indices on paper by hand for a similar small example, say *nslices* = 4, *nstacks* = 2. Draw a picture, numbering the vertices and develop your own indices array based on your picture.
+- When you have the concept down, recreate your picture in code inside the Earth::Init() function. Call earth_mesh_.SetVertices() to set your vertex array and earth_mesh_.SetIndices() to set your index array.
+- To check your work, try clicking on the “Toggle Debug Mode” button in the app. If you have a large mesh, this will considerably slow down your rendering, but it is very useful when debugging – it draws the edges of each triangle in the mesh so that you can see your work.
+- When your simple example is working, transition to a mesh that will work well for the earth. Make sure your x and y values follow the ranges mentioned above.
+- At this point, we also recommend that you clean up your code a bit. At some point in your code, you will have needed to covert a latitude and longitude to a (x,y,z) point. If you have not already, move this code to the function called Earth::LatLongToPlane(). This will make it easier for you to use the same code later to find the correct positions for earthquakes.
+
+*Work in the “B” range will:*
+
+Apply a texture of the Earth to the rectangle so that it looks like the original image.
+
+- To do this you will need to call earth_mesh_.SetTexCoords(0, …). Remember to use 0 for the first argument. We will only be applying a single texture to the earth mesh, so we’ll only be using texture unit 0.
+
+Display on the Earth all the earthquakes that have happened within the past one year of the current visualization time.
+
+- Use Earth::LatLongToPlane() to obtain the earthquake positions such that they match the textures (i.e., an earthquake occurring in California must be displayed in the same location as the California of the Earth texture). One way to tell if your mapping is correct is if you see a lot of earthquakes along the “Ring of Fire” in the Pacific Ocean off the coast of Asia.
+- You may use the QuickShapes functions to draw the earthquake markers or come up with your own custom geometry. Earthquake sizes and colors should be based on the earthquake data in some meaningful way. Explain and justify the mapping you choose in your README.
+
+*Work in the “A” range will:*
+
+Change the vertex positions and normals to draw the Earth as a sphere instead of a rectangle.
+
+- If you fill in Earth::LatLongToSphere() and use this rather than the Plane version when creating your mesh, you should end up with a good sphere geometry. The mesh connectivity (i.e., the indices that define the triangles) and texture coordinates do not need to change when from moving from a plane to a sphere, but the vertex locations do.
+- You will need to convert latitude and longitude into the three-dimensional Cartesian coordinates of the corresponding point on the sphere, using the formulas
+
+​		x = cos(lat) sin(lon)
+
+​		y= sin(lat)
+
+​		z = cos(lat) cos(lon)
+
+Be careful to take note that the input latitude and longitude are in degrees, not radians. You can convert them to radians using GfxMath::ToRadians(deg)
+
+- Since you are now rendering a sphere, you’ll need to add some normals to get the lighting on the globe to look good. The normals array should be exactly the same length as the vertices array, and you can set them using earth_mesh_.SetNormals()
+- The texture is permitted to look slightly “cut off” *only* at the top and bottom stack of the Earth mesh. The image below shows what this looks like when *slices* = 6 and *stacks* = 3. (See below for why this happens.) Increasing the number of stacks and slices will make this problem harder to see.
+- The earthquakes must appear on the sphere in the correct geographical locations (though they may not lie exactly on the mesh if it has too few slices and stacks).  For example, the following mesh is a poor approximation of a sphere:
+
+![](./images/blockyearth.jpg)
+
+Smoothly transform the mesh between the flat map and the globe based on user input. The program should start with the Earth displayed as a map. When the user presses the "Globe" button, it should morph into a sphere. If the user presses the button again, it should go back.
+
+- To get started on this, you will want to store the parts of the mesh that change between the two representations (vertices and normals) as member variables within your Earth class rather than local variables within the Init() function. This way, you will be able to refer to them later in your program.
+- Once you have these values stored, try updating the mesh when the "Globe" button is pressed. QuakeApp::OnGlobeBtnPressed() will be called whenever the user presses this button. To update the mesh, you just need to call earth_mesh_.SetVerices() and earth_mesh_.SetNormals() again with the appropriate arrays and then call earth_mesh_.UpdateGPUMemory()
+- Once you have an abrupt transition working, try creating a smooth morph. Remember that UpdateSimulation() is the callback to use for any sort of physical simulation or animation. Inside that function, the strategy you should use is to interpolate between the vertices for the map and for the globe based upon the elapsed time since you start the morph. Check out the Vector3::Lerp() and Point3::Lerp() functions for help with this. (Technically, the correct normal of the interpolated shape is not simply the interpolation of the normals, but we may pretend it is for this assignment.)
+
+If you reduce the value of *slices* and *stacks* and then watch the mesh structure as it interpolates between a rectangle and a sphere, you should be able to see why the texture appears to be cut off near the poles.
 
 ## Useful Math
 

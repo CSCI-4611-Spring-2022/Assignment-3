@@ -115,9 +115,9 @@ Create a second array of vertex positions to draw the Earth as a sphere instead 
 
 - Complete the `Earth.convertLatLongToSphere() ` method.  If you use this to version when creating your mesh, you should end up with sphere geometry instead of a flat map. The mesh connectivity (i.e., the indices that define the triangles) and texture coordinates **do not need to change** when from moving from a plane to a sphere. Only the vertex positions need to change.
 - You will need to convert latitude and longitude into the three-dimensional Cartesian coordinates of the corresponding point on the sphere, using the following formulas:
-  - **x** = cos(**lat**) * sin(**lon**)
+  - **x** = cos(**lat**) × sin(**lon**)
   - **y**= sin(**lat**)
-  - **z** = cos(**lat**) * cos(**lon**)
+  - **z** = cos(**lat**) × cos(**lon**)
 
 
 - Be careful to take note that the latitude and longitude in the input file are in degrees, not radians. You can convert them to radians by multiplying by `Math.PI / 180`.
@@ -152,7 +152,7 @@ Here are a few mathematical operations that are very common in graphics and may 
 
 **Linear interpolation**: One way to blend smoothly between two values *x* and *y* (which could be reals, or vectors, or matrices, etc.) is to define a function in which the output varies continuously from *x* to *y* as a scalar parameter *alpha* goes from 0 to 1. This function is traditionally abbreviated "lerp."
 
-- lerp(*x*, *y*, *alpha*) = *x* + *alpha* * *(*y − *x*)
+- lerp(*x*, *y*, *alpha*) = *x* + *alpha* × (*y* − *x*)
 
 Thus, for example:
 
@@ -185,7 +185,7 @@ x = THREE.MathUtils.clamp(x, a, b)
 
 **Rescaling**: Suppose you have a value *x* in the range [*xmin*, *xmax*], and you want to find the corresponding value in [*ymin*, *ymax*]. Observe that *x* − *xmin* lies in [0, *xmax* − *xmin*], and (*x* − *xmin*)/(*xmax* − *xmin*) lies in [0, 1], so the desired value is:
 
-- *y* = *ymin* + (*ymax* − *ymin*) * (*x* − *xmin*) / (*xmax* − *xmin*)
+- *y* = *ymin* + (*ymax* − *ymin*) × (*x* − *xmin*) / (*xmax* − *xmin*)
 
 ## Rubric
 

@@ -114,7 +114,26 @@ export class QuakeVis extends GraphicsApp
         currentDate.setTime(this.currentTime);
         this.date = currentDate.getUTCMonth() + "/" + currentDate.getUTCDate() + "/" + currentDate.getUTCFullYear();
 
-        // TO DO: Create and animate the earthquakes!
+        // Create the earthquakes!
+        var quake = this.earthquakeDB.getNextQuake(currentDate);
+        while(quake)
+        {
+            // TO DO: Calculate the actual normalized magnitude
+            var normalizedMagnitude = 1;
+
+            // Uncomment this line of code to start creating earthquake markers
+            // They will initially be placed at random locations on a plane
+            // You will need to update the code to compute correct positions on the map and globe
+            //this.earth.createEarthquake(quake);
+
+            quake = this.earthquakeDB.getNextQuake(currentDate);
+        }
+
+        // Call the earth's update method
+        this.earth.update(deltaTime);
+
+        // Animate the earthquake markers (and remove ones that are too old)
+        this.earth.animateEarthquakes(this.currentTime);
     }
 
     toggleDebugMode(value: boolean) : void
@@ -122,21 +141,25 @@ export class QuakeVis extends GraphicsApp
         this.earth.toggleDebugMode(value);
     }
 
+    // Mouse event handlers for wizard functionality
     onMouseDown(event: MouseEvent) : void 
     {
         this.mouseDrag = true;
     }
 
+    // Mouse event handlers for wizard functionality
     onMouseUp(event: MouseEvent) : void
     {
         this.mouseDrag = false;
     }
 
+    // Mouse event handlers for wizard functionality
     onMouseMove(event: MouseEvent) : void
     {
         if(this.mouseDrag)
         {
-            // TO DO: Add code for when the user clicks and drags the mouse
+            // You can add code here to make something happen when the user
+            // clicks and drags the mouse
         }
 
         // Set the mouse vector in case we need to use it in update()

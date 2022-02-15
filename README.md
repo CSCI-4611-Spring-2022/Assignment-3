@@ -103,11 +103,11 @@ this.earthMesh.geometry.setAttribute('uv', new THREE.Float32BufferAttribute(texC
 
 #### 4. Displaying the Earthquakes
 
-Display on the Earth all the earthquakes that have happened within the past one year of the current visualization time.
+Display on the Earth all the earthquakes that have happened within the past one year of the current visualization time.  The basic structure for this is already implemented; you just need to uncomment a line of code in the `QuakeVis.update()` method to start drawing earthquake markers.  However, their positions will initially be placed randomly.
 
-- Use your `Earth.convertLatLongToPlane()` method to obtain the earthquake positions such that they match the textures (i.e., an earthquake occurring in California must be displayed in the same location as the California of the Earth texture). One way to tell if your mapping is correct is if you see a lot of earthquakes along the "Ring of Fire" in the Pacific Ocean off the coast of Asia.
+- Use your `Earth.convertLatLongToPlane()` method to obtain the earthquake positions such that they match the texture (i.e., an earthquake occurring in California must be displayed in the same location as the California of the Earth texture). One way to tell if your mapping is correct is if you see a lot of earthquakes along the "Ring of Fire" in the Pacific Ocean off the coast of Asia.
 - You may use a sphere to draw the earthquake markers or come up with your own custom geometry. Earthquake sizes and colors should be based on the earthquake data in some meaningful way. For example, the instructor's implementation used `lerp()` functions to adjust the radius (between some predefined minimum and maximum) and color (between yellow to red) of the sphere based on the magnitude.
-- In the instructor's implementation, the earthquakes markers are animated to gradually shrink and then are removed from the scene.  The size animation is not necessary for this assignment and could be considered as wizard functionality.  However, you should still make sure to remove each marker after a certain period of time by calling the parent object's `remove()` function.  Otherwise, it will keep creating new markers until the program slows down and potentially crashes.
+- In the instructor's implementation, the earthquakes markers are animated to gradually shrink before they are removed from the scene.  The size animation is not necessary for this assignment and could be considered as wizard functionality.  
 
 #### 5. Creating the Globe Mesh Geometry
 
@@ -142,7 +142,7 @@ If you reduce the value of *columns* and *rows* and then watch the mesh structur
 
 #### 8. Morphing the Earthquake Positions
 
-Similar to the globe geometry, you will need to create a second position variable for each earthquake marker using the `Earth.convertLatLongToSphere()` method.  Both of these positions are stored using `Vector3`, so you can use the `lerpVectors()` function described in the "Useful Math" section to morph between them at the same time as the map and globe.
+Similar to the globe geometry, you will need to add member variables for the map and globe positions in the `EarthquakeMarker` class using the `Earth.convertLatLongToSphere()` method.  Both of these positions should be stored using `Vector3`, so you can use the `lerpVectors()` function described in the "Useful Math" section to morph between them at the same time as the map and globe.
 
 - The earthquakes must appear on the sphere in the correct geographical locations.  However, note that they may not lie exactly on the mesh if it has too few rows and columns.
 
@@ -194,8 +194,8 @@ Graded out of 20 points.  Partial credit is possible for each step.
 1. Creating the flat map mesh (4)
 2. Creating the flat map normals (1)
 3. Texturing the mesh (2)
-4. Displaying the earthquakes (4)
-5. Creating the globe mesh geometry (2)
+4. Displaying the earthquakes (2)
+5. Creating the globe mesh geometry (4)
 6. Creating the globe mesh normals (1)
 7. Morphing between the map and globe (4)
 8. Morphing the earthquake positions (2)

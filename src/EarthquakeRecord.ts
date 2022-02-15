@@ -4,6 +4,7 @@ export class EarthquakeRecord
     public longitude : number;
     public latitude : number;
     public magnitude : number;
+    public normalizedMagnitude : number;
 
     constructor(line : string)
     {
@@ -18,5 +19,6 @@ export class EarthquakeRecord
         this.longitude = parseFloat(line.substring(44, 52));
         this.latitude = parseFloat(line.substring(37, 44));
         this.magnitude = parseFloat(line.substring(66, 70));
+        this.normalizedMagnitude = this.magnitude;
     }
 }

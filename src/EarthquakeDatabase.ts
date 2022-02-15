@@ -34,6 +34,12 @@ export class EarthquakeDatabase
                         this.minMagnitude = quake.magnitude;
                 }
             });
+
+            // Go through all the quakes and compute the normalized magnitude between 0 and 1
+            this.earthquakes.forEach((quake: EarthquakeRecord) => {
+                quake.normalizedMagnitude = (quake.magnitude - this.minMagnitude) / (this.maxMagnitude - this.minMagnitude);
+            });
+
             this.loaded = true;
         });
     }

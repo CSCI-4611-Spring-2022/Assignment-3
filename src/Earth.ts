@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { EarthquakeRecord } from './EarthquakeRecord';
+import { EarthquakeMarker } from './EarthquakeMarker';
 
 export class Earth extends THREE.Group
 {
@@ -59,9 +60,50 @@ export class Earth extends THREE.Group
         this.add(this.earthMesh);
     }
 
+    // TO DO: add animations for mesh morphing
     public update(deltaTime: number) : void
     {
         
+    }
+
+    public animateEarthquakes(currentTime : number)
+    {
+        // This code removes earthquake markers after their life has expired
+        this.children.forEach((quake : THREE.Object3D) => {
+            if(quake instanceof EarthquakeMarker)
+            {
+                if(quake.getPlaybackLife(currentTime) == 1)
+                    this.remove(quake);
+            }
+        });
+    } 
+
+    public createEarthquake(record : EarthquakeRecord)
+    {
+        // Number of milliseconds in 1 year (approx.)
+        const duration = 12 * 28 * 24 * 60 * 60;
+
+        // TO DO: currently, the earthquake is just placed randomly on the plane
+        // You will need to update this code to calculate both the map and globe positions
+        var position = new THREE.Vector3(Math.random()*6-3, Math.random()*4-2, 0);
+        var earthquake = new EarthquakeMarker(position, record, duration);
+        this.add(earthquake);
+    }
+
+    public convertLatLongToPlane(latitude: number, longitude: number) : THREE.Vector3
+    {
+        // TO DO: We recommend filling in this function to put all your
+        // lat,long --> plane calculations in one place.
+
+        return new THREE.Vector3();
+    }
+
+    public convertLatLongToSphere(latitude: number, longitude: number) : THREE.Vector3
+    {
+        // TO DO: We recommend filling in this function to put all your
+        // lat,long --> sphere calculations in one place.
+
+        return new THREE.Vector3();
     }
 
     public toggleDebugMode(debugMode : boolean)
@@ -70,21 +112,5 @@ export class Earth extends THREE.Group
             this.earthMesh.material = this.debugMaterial;
         else
             this.earthMesh.material = this.earthMaterial;
-    }
-
-    public convertLatLongToPlane(latitude: number, longitude: number) : THREE.Vector3
-    {
-        // TODO: We recommend filling in this function to put all your
-        // lat,long --> plane calculations in one place.
-
-        return new THREE.Vector3();
-    }
-
-    public convertLatLongToSphere(latitude: number, longitude: number) : THREE.Vector3
-    {
-        // TODO: We recommend filling in this function to put all your
-        // lat,long --> sphere calculations in one place.
-
-        return new THREE.Vector3();
     }
 }
